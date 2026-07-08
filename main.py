@@ -4,7 +4,8 @@ from database.database_manager import DatabaseManager
 from database.schema_extractor import SchemaExtractor
 from database.context import DatabaseContext
 from langchain_community.utilities import SQLDatabase
-import plotly.io as pio
+import pandas as pd
+import plotly.express as px
 import uuid
 from graph.workflow import analyst_bot
 
@@ -168,13 +169,33 @@ if prompt:
                         }
                     )
 
-            st.markdown(response["query_result"])
+            st.markdown(response["answer"])
 
             assistant_message = {
                 "role": "assistant",
-                "content": response["query_result"]
+                "content": response["answer"]
             }
 
             st.session_state.messages.append(
                 assistant_message
             )
+            
+            chart = response["chart_spec"]
+
+            if chart.create_chart:
+
+                df = pd.DataFrame(
+                    response["query_result"]
+                )
+
+                fig = px.bar(
+                    df,
+                    x=chart.x_column,
+                    y=chart.y_column,
+                    title=chart.title,
+                )
+
+                st.plotly_chart(
+                    fig,
+                    use_container_width=True,
+                )
