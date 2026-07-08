@@ -1,9 +1,9 @@
 from dotenv import load_dotenv
-import os
+from decouple import config
 
 load_dotenv()
 
-OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
+OPENROUTER_API_KEY = config("OPENROUTER_API_KEY")
 
 UPLOAD_FOLDER = "uploads"
 SQLITE_PREFIX = "sqlite:///"
