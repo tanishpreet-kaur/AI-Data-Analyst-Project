@@ -1,10 +1,12 @@
-from typing import Literal, Optional
+from typing import Optional
 from pydantic import BaseModel
 
-class ChartSpec(BaseModel):
+class VisualisationOutput(BaseModel):
     create_chart: bool
-    chart_type: Optional[Literal["bar", "line", "pie", "scatter"]] = None
+    reason: str
+    chart_type: Optional[str] = None
     x_column: Optional[str] = None
     y_column: Optional[str] = None
     title: Optional[str] = None
-    reason: Optional[str] = None
+    x_label: Optional[str] = None
+    y_label: Optional[str] = None

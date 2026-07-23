@@ -3,7 +3,6 @@ from states.analyst_state import AnalystState
 from nodes.sql_generation import sql_generation_node
 from nodes.review_node import review_sql
 from nodes.routers import review_router
-
 from nodes.sql_execution import sql_execution_node
 from nodes.insight_generation import insight_generation_node
 from nodes.visualisation_node import visualisation_node
