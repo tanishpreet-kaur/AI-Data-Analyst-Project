@@ -11,3 +11,8 @@ def review_router(state: AnalystState):
     if retries < MAX_RETRIES:
         return "sql_generator"
     return "end"
+
+def generation_router(state):
+    if state.get("review_status") == "BLOCKED":
+        return "end"
+    return "review_sql"

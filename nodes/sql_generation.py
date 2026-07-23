@@ -1,5 +1,7 @@
 from agents.sql_agent import create_sql_agent
 
+DESTRUCTIVE_SENTINEL = "DESTRUCTIVE_REQUEST"
+
 def sql_generation_node(state):
     agent = create_sql_agent(state["database"])
     response = agent.invoke(
@@ -8,12 +10,8 @@ def sql_generation_node(state):
                 {
                     "role": "user",
                     "content": f"""
-                        Question:
-                        {state['question']}
-
-                        Schema:
-                        {state['database_context'].schema}
-
+                        Question: {state['question']}
+                        Schema: {state['database_context'].schema}
                         Generate ONLY SQL.
                         """
                 }
@@ -21,6 +19,13 @@ def sql_generation_node(state):
         }
     )
 
-    return {
-        "sql_query": response["messages"][-1].content
-    }
+    content = response["messages"][-1].content.strip()
+
+    if content == DESTRUCTIVE_SENTINEL:
+        return {
+            "sql_query": None,
+            "review_status": "BLOCKED",
+            "answer": "cannot execute this",
+        }
+
+    return {"sql_query": content}

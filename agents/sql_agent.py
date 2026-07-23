@@ -9,8 +9,13 @@ def create_sql_agent(database):
         llm=llm
     )
 
+    read_only_tools = [
+        tool for tool in toolkit.get_tools()
+        if tool.name != "sql_db_query"
+    ]
+
     return create_agent(
         model=llm,
-        tools=toolkit.get_tools(),
+        tools=read_only_tools,
         system_prompt=SQL_PROMPT
     )

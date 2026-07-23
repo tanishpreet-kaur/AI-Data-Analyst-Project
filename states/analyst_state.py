@@ -1,5 +1,5 @@
 from typing import TypedDict, Optional, Any
-from states.chart import ChartSpec
+from states.chart import VisualisationOutput
 from database.context import DatabaseContext
 from langchain_community.utilities import SQLDatabase
 
@@ -15,4 +15,4 @@ class AnalystState(TypedDict):
     sql_query: Optional[str]
     query_result: Optional[Any]
     answer: Optional[str]
-    chart_spec: ChartSpec | None
+    chart_spec: VisualisationOutput | None

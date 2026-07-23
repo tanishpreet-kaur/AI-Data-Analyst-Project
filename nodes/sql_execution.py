@@ -1,24 +1,13 @@
+import pandas as pd
 from states.analyst_state import AnalystState
-from config.llm import llm
-from langchain_community.agent_toolkits.sql.toolkit import SQLDatabaseToolkit
 
 def sql_execution_node(state: AnalystState):
     try:
-        toolkit = SQLDatabaseToolkit(db=state["database"], llm=llm)
-
-        tools = {
-            tool.name: tool
-            for tool in toolkit.get_tools()
-        }
-
-        query_tool = tools["sql_db_query"]
-
-        query = (state["sql_query"])
-
-        result = query_tool.invoke(query)
-
+        query = state["reviewed_sql"]
+        engine = state["database"]._engine
+        df = pd.read_sql(query, engine)
         return {
-            "query_result": result,
+            "query_result": df,
             "error": None,
         }
 

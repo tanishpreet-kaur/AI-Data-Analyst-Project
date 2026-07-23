@@ -4,9 +4,9 @@ from pydantic import BaseModel
 class VisualisationOutput(BaseModel):
     create_chart: bool
     reason: str
-    chart_type: Optional[str] = None
-    x_column: Optional[str] = None
-    y_column: Optional[str] = None
-    title: Optional[str] = None
-    x_label: Optional[str] = None
-    y_label: Optional[str] = None
+    chart_type: str = ""
+    x_column: str = ""
+    y_column: str = ""
+    title: str = ""
+    x_label: str = ""
+    y_label: str = ""

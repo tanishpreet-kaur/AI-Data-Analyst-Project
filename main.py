@@ -184,18 +184,78 @@ if prompt:
 
             if chart.create_chart:
 
-                df = pd.DataFrame(
-                    response["query_result"]
-                )
+                df = response["query_result"]
 
-                fig = px.bar(
-                    df,
-                    x=chart.x_column,
-                    y=chart.y_column,
-                    title=chart.title,
-                )
+                if chart.chart_type == "bar":
+                    fig = px.bar(
+                        df,
+                        x=chart.x_column,
+                        y=chart.y_column,
+                        title=chart.title,
+                        labels={
+                            chart.x_column: chart.x_label,
+                            chart.y_column: chart.y_label,
+                        },
+                    )
 
-                st.plotly_chart(
-                    fig,
-                    use_container_width=True,
-                )
+                elif chart.chart_type == "horizontal_bar":
+                    fig = px.bar(
+                        df,
+                        x=chart.y_column,
+                        y=chart.x_column,
+                        orientation="h",
+                        title=chart.title,
+                        labels={
+                            chart.x_column: chart.x_label,
+                            chart.y_column: chart.y_label,
+                        },
+                    )
+
+                elif chart.chart_type == "line":
+                    fig = px.line(
+                        df,
+                        x=chart.x_column,
+                        y=chart.y_column,
+                        title=chart.title,
+                        labels={
+                            chart.x_column: chart.x_label,
+                            chart.y_column: chart.y_label,
+                        },
+                    )
+
+                elif chart.chart_type == "pie":
+                    fig = px.pie(
+                        df,
+                        names=chart.x_column,
+                        values=chart.y_column,
+                        title=chart.title,
+                    )
+
+                elif chart.chart_type == "scatter":
+                    fig = px.scatter(
+                        df,
+                        x=chart.x_column,
+                        y=chart.y_column,
+                        title=chart.title,
+                        labels={
+                            chart.x_column: chart.x_label,
+                            chart.y_column: chart.y_label,
+                        },
+                    )
+
+                elif chart.chart_type == "histogram":
+                    fig = px.histogram(
+                        df,
+                        x=chart.x_column,
+                        title=chart.title,
+                        labels={
+                            chart.x_column: chart.x_label,
+                        },
+                    )
+
+                else:
+                    fig = None
+
+                if fig:
+                    fig.update_layout(template="plotly_white")
+                    st.plotly_chart(fig, use_container_width=True)
