@@ -1,9 +1,21 @@
 import plotly.express as px
 
 def build_chart(df, spec):
-
     if not spec.create_chart:
         return None
+    
+    required = [c for c in (spec.x_column, spec.y_column) if c]
+    missing = [c for c in required if c not in df.columns]
+    
+    if missing:
+        return None   
+
+    if spec.chart_type == "horizontal_bar":
+        return px.bar(
+            df, x=spec.y_column, y=spec.x_column, orientation="h",
+            title=spec.title,
+            labels={spec.x_column: spec.x_label, spec.y_column: spec.y_label},
+        )
 
     if spec.chart_type == "bar":
         return px.bar(

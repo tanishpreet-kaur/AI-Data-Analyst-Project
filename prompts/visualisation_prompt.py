@@ -54,9 +54,7 @@ Never use a Pie chart for trends.
 
 RULES:
 Return ONLY the structured output.
+Use the exact column names from columns. Do not infer, rename, or abbreviate them. If a requested field is not present, choose the closest available column or return an error instead of inventing a new name.
 For x_column and y_column, use the exact column names appearing in the SQL result.
 Titles should be short and professional.
-If no chart is useful:
-create_chart=False
-Provide a short reason.
 """

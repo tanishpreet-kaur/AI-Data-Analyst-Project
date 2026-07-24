@@ -8,6 +8,7 @@ import pandas as pd
 import plotly.express as px
 import uuid
 from graph.workflow import analyst_bot
+from tools.chart_renderer import build_chart
 
 if "thread_id" not in st.session_state:
     st.session_state.thread_id = str(uuid.uuid4())
@@ -17,7 +18,7 @@ st.set_page_config(
     layout="wide",
 )
 
-# Initialize chat history
+# Chat history
 if "messages" not in st.session_state:
     st.session_state.messages = []
     
@@ -25,7 +26,7 @@ if "messages" not in st.session_state:
 st.title("AI Data Analyst")
 st.caption("What would you like to analyze today?")
 
-# side bar for uploads and chat history
+# Side bar for uploads and chat history
 with st.sidebar:
     st.title("AI Data Analyst")
 
@@ -170,92 +171,21 @@ if prompt:
                     )
 
             st.markdown(response["answer"])
+            
+            chart = response.get("chart_spec")
+            query_result = response.get("query_result")
 
             assistant_message = {
                 "role": "assistant",
-                "content": response["answer"]
+                "content": response["answer"],
+                "chart_spec": chart,          
+                "table": query_result,        
             }
+            st.session_state.messages.append(assistant_message)
 
-            st.session_state.messages.append(
-                assistant_message
-            )
-            
-            chart = response["chart_spec"]
-
-            if chart.create_chart:
-
-                df = response["query_result"]
-
-                if chart.chart_type == "bar":
-                    fig = px.bar(
-                        df,
-                        x=chart.x_column,
-                        y=chart.y_column,
-                        title=chart.title,
-                        labels={
-                            chart.x_column: chart.x_label,
-                            chart.y_column: chart.y_label,
-                        },
-                    )
-
-                elif chart.chart_type == "horizontal_bar":
-                    fig = px.bar(
-                        df,
-                        x=chart.y_column,
-                        y=chart.x_column,
-                        orientation="h",
-                        title=chart.title,
-                        labels={
-                            chart.x_column: chart.x_label,
-                            chart.y_column: chart.y_label,
-                        },
-                    )
-
-                elif chart.chart_type == "line":
-                    fig = px.line(
-                        df,
-                        x=chart.x_column,
-                        y=chart.y_column,
-                        title=chart.title,
-                        labels={
-                            chart.x_column: chart.x_label,
-                            chart.y_column: chart.y_label,
-                        },
-                    )
-
-                elif chart.chart_type == "pie":
-                    fig = px.pie(
-                        df,
-                        names=chart.x_column,
-                        values=chart.y_column,
-                        title=chart.title,
-                    )
-
-                elif chart.chart_type == "scatter":
-                    fig = px.scatter(
-                        df,
-                        x=chart.x_column,
-                        y=chart.y_column,
-                        title=chart.title,
-                        labels={
-                            chart.x_column: chart.x_label,
-                            chart.y_column: chart.y_label,
-                        },
-                    )
-
-                elif chart.chart_type == "histogram":
-                    fig = px.histogram(
-                        df,
-                        x=chart.x_column,
-                        title=chart.title,
-                        labels={
-                            chart.x_column: chart.x_label,
-                        },
-                    )
-
-                else:
-                    fig = None
-
-                if fig:
-                    fig.update_layout(template="plotly_white")
+            if chart and chart.create_chart and query_result is not None:
+                fig = build_chart(query_result, chart)
+                if chart.create_chart and fig is None:
+                    st.warning(f"Could not render chart type '{chart.chart_type}'.")
+                elif fig:
                     st.plotly_chart(fig, use_container_width=True)
