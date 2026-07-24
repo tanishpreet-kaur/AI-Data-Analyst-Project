@@ -1,71 +1,45 @@
+import pandas as pd
 import plotly.express as px
 
-def build_chart(df, spec):
-    if not spec.create_chart:
-        return None
-    
-    required = [c for c in (spec.x_column, spec.y_column) if c]
-    missing = [c for c in required if c not in df.columns]
-    
-    if missing:
-        return None   
+def create_plot(
+    data: list[dict],
+    chart_type: str,
+    x_column: str,
+    y_column: str,
+    title: str,
+):
+    df = pd.DataFrame(data)
 
-    if spec.chart_type == "horizontal_bar":
-        return px.bar(
-            df, x=spec.y_column, y=spec.x_column, orientation="h",
-            title=spec.title,
-            labels={spec.x_column: spec.x_label, spec.y_column: spec.y_label},
-        )
-
-    if spec.chart_type == "bar":
-        return px.bar(
+    if chart_type == "bar":
+        fig = px.bar(
             df,
-            x=spec.x_column,
-            y=spec.y_column,
-            title=spec.title,
-            labels={
-                spec.x_column: spec.x_label,
-                spec.y_column: spec.y_label,
-            },
+            x=x_column,
+            y=y_column,
+            title=title
         )
 
-    if spec.chart_type == "line":
-        return px.line(
+    elif chart_type == "line":
+        fig = px.line(
             df,
-            x=spec.x_column,
-            y=spec.y_column,
-            title=spec.title,
-            labels={
-                spec.x_column: spec.x_label,
-                spec.y_column: spec.y_label,
-            },
+            x=x_column,
+            y=y_column,
+            title=title
         )
 
-    if spec.chart_type == "pie":
-        return px.pie(
+    elif chart_type == "pie":
+        fig = px.pie(
             df,
-            names=spec.x_column,
-            values=spec.y_column,
-            title=spec.title,
+            names=x_column,
+            values=y_column,
+            title=title
         )
 
-    if spec.chart_type == "scatter":
-        return px.scatter(
+    elif chart_type == "scatter":
+        fig = px.scatter(
             df,
-            x=spec.x_column,
-            y=spec.y_column,
-            title=spec.title,
-            labels={
-                spec.x_column: spec.x_label,
-                spec.y_column: spec.y_label,
-            },
+            x=x_column,
+            y=y_column,
+            title=title
         )
 
-    if spec.chart_type == "histogram":
-        return px.histogram(
-            df,
-            x=spec.x_column,
-            title=spec.title,
-        )
-
-    return None
+    return fig.to_json()

@@ -8,5 +8,3 @@ class VisualisationOutput(BaseModel):
     x_column: str = ""
     y_column: str = ""
     title: str = ""
-    x_label: str = ""
-    y_label: str = ""

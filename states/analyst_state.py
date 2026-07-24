@@ -3,7 +3,6 @@ from states.chart import VisualisationOutput
 from database.context import DatabaseContext
 from langchain_community.utilities import SQLDatabase
 
-
 class AnalystState(TypedDict):
     question: str
     database: SQLDatabase

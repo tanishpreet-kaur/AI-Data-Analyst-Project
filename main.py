@@ -8,7 +8,6 @@ import pandas as pd
 import plotly.express as px
 import uuid
 from graph.workflow import analyst_bot
-from tools.chart_renderer import build_chart
 
 if "thread_id" not in st.session_state:
     st.session_state.thread_id = str(uuid.uuid4())
@@ -184,7 +183,13 @@ if prompt:
             st.session_state.messages.append(assistant_message)
 
             if chart and chart.create_chart and query_result is not None:
-                fig = build_chart(query_result, chart)
+                fig = create_plot(
+                    data=query_result,
+                    chart_type=chart.chart_type,
+                    x_column=chart.x_column,
+                    y_column=chart.y_column,
+                    title=chart.title
+                )
                 if chart.create_chart and fig is None:
                     st.warning(f"Could not render chart type '{chart.chart_type}'.")
                 elif fig:
